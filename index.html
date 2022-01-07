@@ -546,12 +546,19 @@ new Vue({
 
           // 提取 ts 视频片段地址
           m3u8Str.split('\n').forEach((item) => {
-            if (item.toLowerCase().indexOf('.ts') > -1 || item.toLowerCase().indexOf('.image') > -1 || item.startsWith('http')) {
+            if (item.toLowerCase().indexOf('.ts') > -1 || item.toLowerCase().indexOf('.image') > -1 || (item.startsWith('http') && !item.endsWith('.m3u8'))) {
               this.tsUrlList.push(this.applyURL(item, this.url))
               this.finishList.push({
                 title: item,
                 status: ''
               })
+            } else if (item.endsWith('.m3u8')) {
+              if (item.startsWith('http')) {
+                this.url = item
+              } else {
+                this.url = this.url.substring(0, this.url.indexOf('/', 10)) + item
+              }
+              break
             }
           })
 
