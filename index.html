@@ -558,6 +558,10 @@ new Vue({
               } else {
                 this.url = this.url.substring(0, this.url.indexOf('/', 10)) + item
               }
+              let href = document.location.href
+              pos = href.indexOf('?')
+              pos = pos > 0 ? pos : href.length
+              document.location.href = href.substring(0, pos) + '?source=' + this.url
             }
           })
 
