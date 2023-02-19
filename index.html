@@ -357,10 +357,10 @@
   页面加载中，请耐心等待...
   <h1 style="white-space: pre;">
     推荐一个 m3u8 网页版提取工具，无需下载软件，打开网站即可下载，自动检测，一键下载。
-    工具链接：https://blog.luckly-mjw.cn/tool-show/m3u8-downloader/index.html
+    工具链接：https://m3u8.hkasr.com/index.html
     工具教程：https://segmentfault.com/a/1190000021847172?_ea=32289224
     <img src="https://upyun.luckly-mjw.cn/Assets/blog/m3u8-downloader-121-75.jpeg" alt="m3u8 视频下载工具" title="logo"/>
-    <a target="_blank" href="https://blog.luckly-mjw.cn/tool-show/m3u8-downloader/index.html">点击跳转</a>
+    <a target="_blank" href="https://m3u8.hkasr.com/index.html">点击跳转</a>
   </h1>
 </div>
 <section id="m-app" v-cloak>
@@ -593,7 +593,7 @@ new Vue({
       // 当前协议不一致，切换协议
       if (location.href.indexOf('blog.luckly-mjw.cn') > -1 && this.url.indexOf(location.protocol) === -1) {
         //alert('当前协议不一致，跳转至正确页面重新下载')
-        location.href = `${this.url.split(':')[0]}://blog.luckly-mjw.cn/tool-show/m3u8-downloader/index.html?source=${this.url}`
+        location.href = `${this.url.split(':')[0]}://m3u8.hkasr.com/index.html?source=${this.url}`
         return
       }
 
