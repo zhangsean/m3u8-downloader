@@ -377,6 +377,7 @@
   <div class="m-p-temp-url">测试链接：http://1257120875.vod2.myqcloud.com/0ef121cdvodtransgzp1257120875/3055695e5285890780828799271/v.f230.m3u8</div>
   <section class="m-p-input-container">
     <input type="text" v-model="url" :disabled="downloading" placeholder="请输入 m3u8 链接">
+    <input type="text" v-model="title" :disabled="downloading" placeholder="请输入文件名" style="max-width: 200px; margin-left: 10px;">
 
     <!--范围查询-->
     <template v-if="!downloading || rangeDownload.isShowRange">
@@ -556,14 +557,19 @@ new Vue({
       }
     },
 
-    // 使用流式下载，边下载边保存，解决大视频文件内存不足的难题
-    streamDownload(isMp4){
-      this.isGetMP4 = isMp4
-      this.title = new URL(this.url).searchParams.get('title') || this.title // 获取视频标题
+    getFileName() {
+      this.title = this.title || new URL(this.url).searchParams.get('title') // 获取视频标题
       let fileName = this.title || this.formatTime(new Date(), 'YYYY_MM_DD hh_mm_ss')
       if(document.title !== 'm3u8 downloader'){
         fileName = this.getDocumentTitle()
       }
+      return fileName
+    },
+
+    // 使用流式下载，边下载边保存，解决大视频文件内存不足的难题
+    streamDownload(isMp4){
+      this.isGetMP4 = isMp4
+      let fileName = this.getFileName()
       this.streamWriter = window.streamSaver.createWriteStream(`${fileName}.${isMp4 ? 'mp4' : 'ts'}`).getWriter()
       this.getM3U8()
     },
@@ -776,11 +782,7 @@ new Vue({
             this.streamWriter.close()
           }
         } else if (this.finishNum === this.rangeDownload.targetSegment) {
-          let fileName = this.title || this.formatTime(this.beginTime, 'YYYY_MM_DD hh_mm_ss')
-          if(document.title !== 'm3u8 downloader'){
-            fileName = this.getDocumentTitle()
-          }
-          this.downloadFile(this.mediaFileList, fileName)
+          this.downloadFile(this.mediaFileList, this.getFileName())
         }
         callback && callback()
       })
@@ -896,11 +898,7 @@ new Vue({
     // 强制下载现有片段
     forceDownload() {
       if (this.mediaFileList.length) {
-        let fileName = this.title || this.formatTime(this.beginTime, 'YYYY_MM_DD hh_mm_ss')
-        if(document.title !== 'm3u8 downloader'){
-          fileName = this.getDocumentTitle()
-        }
-        this.downloadFile(this.mediaFileList, fileName)
+        this.downloadFile(this.mediaFileList, this.getFileName())
       } else {
         alert('当前无已下载片段')
       }
