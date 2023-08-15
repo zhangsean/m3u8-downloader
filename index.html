@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <meta name="author" content="毛静文,Momo">
-  <link rel="shortcut icon" type="image/x-icon" href="imgs/favicon.ico" />
+<link rel="shortcut icon" type="image/x-icon" href="imgs/favicon.ico" />
   <meta name="keywords" content="m3u8 下载工具, 毛静文的博客,Momo's Blog">
   <meta name="description" content="m3u8 下载工具,无需下载软件,打开网站即可下载,自动检测,一键下载">
   <title>m3u8 downloader</title>
@@ -367,10 +367,10 @@
   <!--顶部操作提示-->
   <section class="m-p-action g-box">{{tips}}</section>
   <a class="m-p-help" target="_blank" href="https://segmentfault.com/a/1190000021847172">?</a>
-  <a class="m-p-tamper" target="_blank" href="m3u8-downloader.user.js">手动添加/更新油猴插件</a>
+<a class="m-p-tamper" target="_blank" href="m3u8-downloader.user.js">手动添加/更新油猴插件</a>
   <a class="m-p-github" target="_blank" href="https://github.com/zhangsean/m3u8-downloader">Github</a>
   <a class="m-p-mse" target="_blank" href="https://segmentfault.com/a/1190000025182822">无差别提取工具</a>
-  <a class="m-p-other" target="_blank" href="http://blog.luckly-mjw.cn/tool-show/index.html">其他实用工具</a>
+    <a class="m-p-other" target="_blank" href="http://blog.luckly-mjw.cn/tool-show/index.html">其他实用工具</a>
   <a class="m-p-language" href="index-en.html">English version</a>
 
   <!--文件载入-->
@@ -943,19 +943,19 @@ new Vue({
 
           // 加载 ASE 解密
           let $ase = document.createElement('script')
-          $ase.src = 'aes-decryptor.js'
+          $ase.src = 'https://upyun.luckly-mjw.cn/lib/aes-decryptor.js'
 
           // 加载 mp4 转码
           let $mp4 = document.createElement('script')
-          $mp4.src = 'mux-mp4.js'
+          $mp4.src = 'https://upyun.luckly-mjw.cn/lib/mux-mp4.js'
 
           // 加载 vue
           let $vue = document.createElement('script')
-          $vue.src = 'vue.js'
+          $vue.src = 'https://upyun.luckly-mjw.cn/lib/vue.js'
 
           // 加载 stream 流式下载器
           let $streamSaver = document.createElement('script')
-          $streamSaver.src = 'stream-saver.js'
+          $streamSaver.src = 'https://upyun.luckly-mjw.cn/lib/stream-saver.js'
 
           // 监听 vue 加载完成，执行业务代码
           $vue.addEventListener('load', () => {${script}})
