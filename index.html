@@ -288,16 +288,22 @@
     line-height: 40px;
     text-align: center;
     border-radius: 4px;
-    cursor: help;
+    cursor: pointer;
     border: solid 1px #eeeeee;
     background-color: #dddddd;
     transition: 0.3s all;
   }
+  .m-p-segment .downloading {
+    background-color: #9ad6f1;
+  }
+  .m-p-segment .converting {
+    background-color: #4fd8c6;
+  }
   .m-p-segment .finish {
+    cursor: auto;
     background-color: #0ACD76;
   }
   .m-p-segment .error {
-    cursor: pointer;
     background-color: #DC5350;
   }
   .m-p-segment .error:hover {
@@ -405,7 +411,7 @@
 
   <template v-if="finishList.length > 0">
     <div class="m-p-line"></div>
-    <div class="m-p-retry" v-if="errorNum" @click="retryAll">重新下载错误片段</div>
+    <div class="m-p-retry" @click="retryAll">重新下载错误片段</div>
     <div class="m-p-force" v-if="mediaFileList.length && !streamWriter" @click="forceDownload">强制下载现有片段</div>
     <div class="m-p-tips">待下载碎片总量：{{ rangeDownload.targetSegment }}，已下载：{{ finishNum }}，错误：{{ errorNum }}，进度：{{ (finishNum / rangeDownload.targetSegment * 100).toFixed(2) }}%</div>
     <div class="m-p-tips" :class="[errorNum ? 'error-tips' : '']">若某视频碎片下载发生错误，将标记为红色，可点击相应图标进行重试</div>
@@ -735,7 +741,9 @@ new Vue({
         }
         this.downloadIndex++
         if (this.finishList[index] && this.finishList[index].status === '') {
+          // let list = this.finishList
           this.finishList[index].status = 'downloading'
+          console.log(index, this.finishList[index].status, this.finishList[index].title)
           this.ajax({
             url: this.tsUrlList[index],
             type: 'file',
@@ -756,19 +764,22 @@ new Vue({
       }
 
       // 建立多少个 ajax 线程
-      for (let i = 0; i < Math.min(6, this.rangeDownload.targetSegment - this.finishNum); i++) {
+      for (let i = 0; i < Math.min(10, this.rangeDownload.targetSegment - this.finishNum); i++) {
         download()
       }
     },
 
     // 处理 ts 片段，AES 解密、mp4 转码
     dealTS(file, index, callback) {
+      this.finishList[index].status = 'converting'
+      // console.log(index, this.finishList[index].status)
       const data = this.aesConf.uri ? this.aesDecrypt(file, index) : file
-      this.conversionMp4(data, index, (afterData) => { // mp4 转码
+      this.convertMp4(data, index, (afterData) => { // mp4 转码
         this.mediaFileList[index - this.rangeDownload.startSegment + 1] = afterData // 判断文件是否需要解密
         this.finishList[index].status = 'finish'
-        this.finishNum++
-        if (this.streamWriter){
+        console.log(index, this.finishList[index].status)
+        this.finishNum = Math.max(this.finishNum, index + 1)
+        if (this.streamWriter) {
           for (let index = this.streamDownloadIndex; index < this.mediaFileList.length; index++) {
             if(this.mediaFileList[index]){
               this.streamWriter.write(new Uint8Array(this.mediaFileList[index]))
@@ -789,7 +800,7 @@ new Vue({
     },
 
     // 转码为 mp4
-    conversionMp4(data, index, callback) {
+    convertMp4(data, index, callback) {
       if (this.isGetMP4) {
         let transmuxer = new muxjs.Transmuxer({
           keepOriginalTimestamps: true,
@@ -929,42 +940,42 @@ new Vue({
             }
 
             let codeStr = `
-          // 注入html
-          let $section = document.createElement('section')
-          $section.innerHTML = \`${dom}\`
-          $section.style.width = '100%'
-          $section.style.height = '800px'
-          $section.style.top = '0'
-          $section.style.left = '0'
-          $section.style.position = 'relative'
-          $section.style.zIndex = '9999'
-          $section.style.backgroundColor = 'white'
-          document.body.appendChild($section);
+            // 注入html
+            let $section = document.createElement('section')
+            $section.innerHTML = \`${dom}\`
+            $section.style.width = '100%'
+            $section.style.height = '800px'
+            $section.style.top = '0'
+            $section.style.left = '0'
+            $section.style.position = 'relative'
+            $section.style.zIndex = '9999'
+            $section.style.backgroundColor = 'white'
+            document.body.appendChild($section);
 
-          // 加载 ASE 解密
-          let $ase = document.createElement('script')
-          $ase.src = 'https://upyun.luckly-mjw.cn/lib/aes-decryptor.js'
+            // 加载 ASE 解密
+            let $ase = document.createElement('script')
+            $ase.src = 'https://upyun.luckly-mjw.cn/lib/aes-decryptor.js'
 
-          // 加载 mp4 转码
-          let $mp4 = document.createElement('script')
-          $mp4.src = 'https://upyun.luckly-mjw.cn/lib/mux-mp4.js'
+            // 加载 mp4 转码
+            let $mp4 = document.createElement('script')
+            $mp4.src = 'https://upyun.luckly-mjw.cn/lib/mux-mp4.js'
 
-          // 加载 vue
-          let $vue = document.createElement('script')
-          $vue.src = 'https://upyun.luckly-mjw.cn/lib/vue.js'
+            // 加载 vue
+            let $vue = document.createElement('script')
+            $vue.src = 'https://upyun.luckly-mjw.cn/lib/vue.js'
 
-          // 加载 stream 流式下载器
-          let $streamSaver = document.createElement('script')
-          $streamSaver.src = 'https://upyun.luckly-mjw.cn/lib/stream-saver.js'
+            // 加载 stream 流式下载器
+            let $streamSaver = document.createElement('script')
+            $streamSaver.src = 'https://upyun.luckly-mjw.cn/lib/stream-saver.js'
 
-          // 监听 vue 加载完成，执行业务代码
-          $vue.addEventListener('load', () => {${script}})
-          document.body.appendChild($mp4);
-          document.body.appendChild($ase);
-          document.body.appendChild($streamSaver);
-          document.body.appendChild($vue);
-          alert('注入成功，请滚动到页面底部，若白屏则等待资源加载')
-          `;
+            // 监听 vue 加载完成，执行业务代码
+            $vue.addEventListener('load', () => {${script}})
+            document.body.appendChild($mp4);
+            document.body.appendChild($ase);
+            document.body.appendChild($streamSaver);
+            document.body.appendChild($vue);
+            alert('注入成功，请滚动到页面底部，若白屏则等待资源加载')
+            `;
             this.copyToClipboard(codeStr);
             this.tips = '复制成功，打开视频网页控制台，注入本代码';
           },
