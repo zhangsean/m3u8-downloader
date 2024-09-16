@@ -743,7 +743,7 @@ new Vue({
         if (this.finishList[index] && this.finishList[index].status === '') {
           // let list = this.finishList
           this.finishList[index].status = 'downloading'
-          console.log(index, this.finishList[index].status, this.finishList[index].title)
+          // console.log(index, this.finishList[index].status, this.finishList[index].title)
           this.ajax({
             url: this.tsUrlList[index],
             type: 'file',
@@ -777,8 +777,8 @@ new Vue({
       this.convertMp4(data, index, (afterData) => { // mp4 转码
         this.mediaFileList[index - this.rangeDownload.startSegment + 1] = afterData // 判断文件是否需要解密
         this.finishList[index].status = 'finish'
-        console.log(index, this.finishList[index].status)
-        this.finishNum = Math.max(this.finishNum, index + 1)
+        this.finishNum = this.mediaFileList.length
+        // console.log(index, this.mediaFileList.length, this.rangeDownload.targetSegment, this.rangeDownload.startSegment)
         if (this.streamWriter) {
           for (let index = this.streamDownloadIndex; index < this.mediaFileList.length; index++) {
             if(this.mediaFileList[index]){
