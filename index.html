@@ -412,7 +412,7 @@
   <template v-if="finishList.length > 0">
     <div class="m-p-line"></div>
     <div class="m-p-retry" @click="retryAll">重新下载错误片段</div>
-    <div class="m-p-force" v-if="mediaFileList.length && !streamWriter" @click="forceDownload">强制下载现有片段</div>
+    <div class="m-p-force" v-if="mediaFileList.length && !streamWriter" @click="forceDownload">下载现有片段</div>
     <div class="m-p-tips">待下载碎片总量：{{ rangeDownload.targetSegment }}，已下载：{{ finishNum }}，错误：{{ errorNum }}，进度：{{ (finishNum / rangeDownload.targetSegment * 100).toFixed(2) }}%</div>
     <div class="m-p-tips" :class="[errorNum ? 'error-tips' : '']">若某视频碎片下载发生错误，将标记为红色，可点击相应图标进行重试</div>
     <section class="m-p-segment">
@@ -625,16 +625,8 @@ new Vue({
 
           // 提取 ts 视频片段地址
           m3u8Str.split('\n').forEach((item) => {
-            // if (/.(png|image|ts|jpg|mp4|jpeg)/.test(item)) {
-            // 放开片段后缀限制，下载非 # 开头的链接片段
-            if (/^[^#]/.test(item)) {
-              console.log(item)
-              this.tsUrlList.push(this.applyURL(item, this.url))
-              this.finishList.push({
-                title: item,
-                status: ''
-              })
-            } else if (item.endsWith('.m3u8')) {
+            console.log(item)
+            if (item.endsWith('.m3u8')) {
               if (item.startsWith('http')) {
                 this.url = item
               } else {
@@ -644,6 +636,15 @@ new Vue({
               pos = href.indexOf('?')
               pos = pos > 0 ? pos : href.length
               document.location.href = href.substring(0, pos) + '?source=' + this.url
+            } else if (/^[^#]/.test(item) && /^[^http]/.test(item)) {
+              // 放开片段后缀限制，下载非 # 开头的链接片段
+              // if (/.(png|image|ts|jpg|mp4|jpeg)/.test(item)) {
+              console.log(item)
+              this.tsUrlList.push(this.applyURL(item, this.url))
+              this.finishList.push({
+                title: item,
+                status: ''
+              })
             }
           })
 
@@ -733,7 +734,7 @@ new Vue({
     // 下载分片
     downloadTS() {
       this.tips = 'ts 视频碎片下载中，请稍后'
-      let download = () => {
+      let download = (i) => {
         let isPause = this.isPause // 使用另一个变量来保持下载前的暂停状态，避免回调后没修改
         let index = this.downloadIndex
         if (index >= this.rangeDownload.endSegment) {
@@ -793,7 +794,7 @@ new Vue({
             this.streamWriter.close()
           }
         } else if (this.finishNum === this.rangeDownload.targetSegment) {
-          this.downloadFile(this.mediaFileList, this.getFileName())
+          // this.downloadFile(this.mediaFileList, this.getFileName())
         }
         callback && callback()
       })
