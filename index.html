@@ -15,6 +15,7 @@
   html, body {
     margin: 0;
     padding: 0;
+    overflow: hidden;
   }
   body::-webkit-scrollbar { display: none}
   p {
@@ -354,6 +355,11 @@
   .m-p-force:hover, .m-p-retry:hover {
     opacity: 0.9;
   }
+  .m-p-span {
+    height: 300px;
+    width: 90%;
+    overflow-y: scroll;
+  }
 
   </style>
 </head>
@@ -415,9 +421,11 @@
     <div class="m-p-force" v-if="mediaFileList.length && !streamWriter" @click="forceDownload">下载现有片段</div>
     <div class="m-p-tips">待下载碎片总量：{{ rangeDownload.targetSegment }}，已下载：{{ finishNum }}，错误：{{ errorNum }}，进度：{{ (finishNum / rangeDownload.targetSegment * 100).toFixed(2) }}%</div>
     <div class="m-p-tips" :class="[errorNum ? 'error-tips' : '']">若某视频碎片下载发生错误，将标记为红色，可点击相应图标进行重试</div>
-    <section class="m-p-segment">
-      <div class="item" v-for="(item, index) in finishList" :class="[item.status]" :title="item.title" @click="retry(index)">{{ index + 1 }}</div>
-    </section>
+    <div class="m-p-span">
+      <section class="m-p-segment">
+        <div class="item" v-for="(item, index) in finishList" :class="[item.status]" :title="item.title" @click="retry(index)">{{ index + 1 }}</div>
+      </section>
+    </div>
   </template>
 </section>
 </body>
